@@ -40,7 +40,9 @@ export class Signal extends Vox.VoxAudioParam {
     return this;
   }
 
-  public disconnect:(destination?: any, outputNum?: number, inputNum?: number) => any;
+  public getValueAtTime(time) {
+    return Vox.VoxAudioParam.prototype.getValueAtTime.call(this, time);
+  }
 }
 
 Vox.Signal = Signal;

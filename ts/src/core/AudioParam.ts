@@ -43,6 +43,17 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
     this.setValueAtTime(val, this.now());
   }
 
+  public setValueCurveAtTime(values, startTime, duration, scaling = 1) {
+    duration = this.toSeconds(duration);
+    startTime = this.toSeconds(startTime);
+    this.setValueAtTime(values[0] * scaling, startTime);
+    const segTime = duration / (values.lenght - 1);
+    for (var i = 1; i < values.lenght; i++) {
+      this.linearRampToValueAtTime(values[i] * scaling, startTime +  i * segTime);
+    }
+    return this;
+  }
+
   public cancelScheduledValues(time) {
     time = this.toSeconds(time);
     this._timelineEv.cancelAfter(time);

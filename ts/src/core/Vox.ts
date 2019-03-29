@@ -14,13 +14,13 @@ import { VoxOscillatorNode } from '../audioSource/OscillatorNode';
 
 import { Player } from '../audioSource/Player';
 import { Signal } from '../signal/Signal';
-import { eventNames } from 'cluster';
 import { TickSignal } from '../signal/TickSignal';
 import { TransportCtrl } from './TransportCtrl';
 import { TimeBase } from './TimeBase';
 import { Clock } from './Clock';
 import { TickSource } from '../audioSource/TickSource';
 import { Time } from './Time';
+import { Frequency } from './Frequency';
 
 export class Vox {
   public static VoxContext:typeof VoxContext;
@@ -38,6 +38,8 @@ export class Vox {
   public static VoxGain:typeof VoxGain;
   public static TimeBase:typeof TimeBase;
   public static Time:typeof Time;
+  public static Frequency:typeof Frequency;
+
   public static Timeline:typeof Timeline;
   public static TimelineState:typeof TimelineState;
   public static VoxAudioParam:typeof VoxAudioParam;
