@@ -7,7 +7,7 @@ interface timeEvent {
 
 export class Timeline extends Vox {
   
-  protected _timeline:timeEvent[] = [];
+  public _timeline:timeEvent[] = [];
 
   public memory:number;
 
@@ -25,7 +25,7 @@ export class Timeline extends Vox {
     this._timeline.splice(idx + 1, 0, event);
     if (idx > this.memory) {
       let overflow = this.length - this.memory;
-		  this._timeline.splice(0, overflow);
+      this._timeline.splice(0, overflow);
     }
     return this;
   }
@@ -202,6 +202,15 @@ export class Timeline extends Vox {
       }, 0, end);
     }
     return this;
+  }
+
+  public previousEvent(event) {
+    const index = this._timeline.indexOf(event);
+    if (index > 0) {
+      return this._timeline[index - 1];
+    } else {
+      return null;
+    }
   }
 }
 

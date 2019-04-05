@@ -28,12 +28,13 @@ export class VoxOscillatorNode extends Vox.VoxAudioNode {
   }) {
     super();
     opt = opt === undefined ? {} : opt;
-    this.type = opt.type === undefined ? OscilType.sine : opt.type;
     this.onended = opt.onended === undefined ? () => {} : opt.onended;
-
+    
     this._oscillator = this.context._ctx.createOscillator();
     // 包络
     this._gainNode = this.output = new Vox.VoxGain(0, VoxType.Default);
+    Vox.connect(this._oscillator, this._gainNode);
+    this.type = opt.type === undefined ? OscilType.sine : opt.type;
     // 频率
     this.frequency = new VoxAudioParam({
       param: this._oscillator.frequency,
@@ -43,8 +44,8 @@ export class VoxOscillatorNode extends Vox.VoxAudioNode {
     // 音差
     this.detune = new VoxAudioParam({
       param : this._oscillator.detune,
-		  units : VoxType.Cents,
-		  value : opt.detune === undefined ? 0 : opt.detune
+      units : VoxType.Cents,
+      value : opt.detune === undefined ? 0 : opt.detune
     });
   }
 
@@ -112,11 +113,11 @@ export class VoxOscillatorNode extends Vox.VoxAudioNode {
     }
   }
 
-  // 生成所需的 实数序列 和 复数序列
-  private _getRealImaginary(type, phase) {
-    let fftSize = 4096;
-    
+  public setPeriodicWave(periodicWave) {
+    this._oscillator.setPeriodicWave(periodicWave);
+    return this;
   }
+
 }
 
 Vox.VoxOscillatorNode = VoxOscillatorNode;

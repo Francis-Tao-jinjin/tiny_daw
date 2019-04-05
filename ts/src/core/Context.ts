@@ -14,6 +14,7 @@ class Ticker {
     this._type = type;
     this._updateInterval = updateInterval;
     this._callback = callback;
+    this._createClock();
   }
 
   private _createWorker() {
@@ -23,13 +24,13 @@ class Ticker {
       var timeoutTime = ${(this._updateInterval * 1000).toFixed(1)};
       //onmessage callback
       self.onmessage = function(msg){
-      	timeoutTime = parseInt(msg.data);
+        timeoutTime = parseInt(msg.data);
       };
       //the tick function which posts a message
       //and schedules a new tick
       function tick(){
-      	setTimeout(tick, timeoutTime);
-      	self.postMessage('tick');
+        setTimeout(tick, timeoutTime);
+        self.postMessage('tick');
       }
       //call tick initially
       tick();
@@ -50,7 +51,7 @@ class Ticker {
     }, this._updateInterval * 1000);
   }
 
-  private createClock() {
+  private _createClock() {
     if (this._type === VoxTick.Worker) {
       try {
         this._createWorker();
@@ -110,11 +111,14 @@ export class VoxContext extends Vox {
     this._computedUpdateInterval = 0;
     
     this.timeoutLoop = this.timeoutLoop.bind(this);
-
-    this._ticker = new Ticker(this.timeoutLoop, opt.clockSrc, opt.updateInterval);
+    this._ticker = new Ticker(() => {
+      this.emit(['tick']);
+    }, opt.clockSrc, opt.updateInterval);
     this._timeouts = new Vox.Timeline(Infinity);
     
     this._timeoutIds = 0;
+
+    this.on('tick', this.timeoutLoop);
 
     this._ctx.onstatechange = function(e) {
       console.log('stagechange', e);

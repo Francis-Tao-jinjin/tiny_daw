@@ -6,7 +6,7 @@ export class Time extends Vox.TimeBase {
     super(val, units);
     const expressions = {
       ...this.expressions,
-      'quantize': {
+      quantize: {
         regexp: /^@(.+)/,
         method: (capture) => {
           if (Vox.VoxTransportCtrl) {
@@ -16,7 +16,7 @@ export class Time extends Vox.TimeBase {
           }
         }
       },
-      'now': {
+      now: {
         regexp: /^\+(.+)/,
         method: (capture) => {
           return this.now() + (new Time(capture)).valueOf();

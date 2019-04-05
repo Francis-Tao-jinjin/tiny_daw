@@ -83,6 +83,7 @@ export class TimeBase extends Vox {
   }
 
   public valueOf() {
+    console.log('get call value of');
     if (Vox.isUndef(this._val)) {
       return this.now();
     } else if (Vox.isString(this._val) && Vox.isUndef(this._units)) {
@@ -148,6 +149,7 @@ export class TimeBase extends Vox {
   }
 
   public freqcyToUnits(freq) {
+    console.log('timeBase freqcyToUnits');
     return 1/freq;
   }
 

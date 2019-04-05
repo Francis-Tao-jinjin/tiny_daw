@@ -191,6 +191,8 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
           return this.toSeconds(value);
         case VoxType.Decibels:
           return this.dbToGain(value);
+        case VoxType.Frequency:
+          return this.toFrequency(value);
         default:
           return value;
       }

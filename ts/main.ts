@@ -12,8 +12,12 @@ player.toMaster();
 (window as any).Vox = Vox;
 
 window.onload = () => {
-  let btn = document.getElementById('playBtn');
-  btn.onclick = () => {
+  let playBtn = document.getElementById('playBtn');
+  playBtn.onclick = () => {
     player.start();
+  }
+  let stopBtn = document.getElementById('stopBtn');
+  stopBtn.onclick = () => {
+    player.stop();
   }
 }

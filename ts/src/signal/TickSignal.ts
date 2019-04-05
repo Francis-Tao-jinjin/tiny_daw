@@ -22,12 +22,19 @@ export class TickSignal extends Vox.Signal{
       time = self.toSeconds(time);
       method.apply(self, arguments);
       const event = self._timelineEv.getMostRecent(time);
-
     }
   }
 
   private _getTickUntilEvent(event?, time?:number) {
-    
+    if (event === null) {
+      event = {
+        ticks: 0,
+        time: 0
+      };
+    } else if (Vox.isUndef(event.ticks)) {
+      const previousEvent = this._timelineEv.previousEvent(event);
+      event.ticks = this._getTickUntilEvent(previousEvent, event.time);
+    }
     const val0 = this.getValueAtTime(event.time);
     let val1 = this.getValueAtTime(time);
 
@@ -38,7 +45,7 @@ export class TickSignal extends Vox.Signal{
     return 0.5 * (time - event.time) * (val0 + val1) + event.ticks;
   }
 
-  private getTicksAtTime(time) {
+  public getTicksAtTime(time) {
     time = this.toSeconds(time);
     const event = this._timelineEv.getMostRecent(time);
     return Math.max(this._getTickUntilEvent(event, time), 0);
@@ -72,12 +79,21 @@ export class TickSignal extends Vox.Signal{
 
   public ticksToTime(ticks, when) {
     when = this.toSeconds(when);
+    return new Vox.Time(this.getDurationOfTicks(ticks, when));
   }
 
-  public getDurationOfTicks(ticks, time?:number) {
+  public getDurationOfTicks(ticks, time?) {
     time = this.toSeconds(time);
     const currentTick = this.getTicksAtTime(time);
     return this.getTimeOfTick(currentTick + ticks) - time;
+  }
+
+  public timeToTicks(duration, when?) {
+    when = this.toSeconds(when);
+    duration = this.toSeconds(duration);
+    const startTicks = this.getTicksAtTime(when);
+    const endTicks = this.getTicksAtTime(when + duration);
+    return new Vox.Ticks(endTicks - startTicks);
   }
 }
 

@@ -18,7 +18,7 @@ export class TimelineState extends Vox.Timeline {
     }
   }
 
-  public setStateAtTime(state, time) {
+  public setStateAtTime(state, time?) {
     this.add({
       state,
       time,

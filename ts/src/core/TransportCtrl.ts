@@ -1,7 +1,7 @@
 import { Vox } from './Vox';
 import { Clock } from './Clock';
 import { TickSignal } from '../signal/TickSignal';
-import { VoxType } from '../type';
+import { VoxType, PlayState } from '../type';
 import { Timeline } from './Timeline';
 
 export class TransportCtrl extends Vox {
@@ -55,6 +55,37 @@ export class TransportCtrl extends Vox {
 
   }
 
+  get state() {
+    return this._clock.getStateAtTime(this.now());
+  }
+
+  get ticks() {
+    return this._clock.ticks;
+  }
+
+  set ticks(t) {
+    if (this._clock.ticks !== t) {
+      const now = this.now();
+      if (this.state === PlayState.Started) {
+        this.emit(['stop', now]);
+        this._clock.setTicksAtTime(t, now);
+        this.emit(['start', now, this.seconds]);
+      } else {
+        this._clock.setTicksAtTime(t, now);
+      }
+    }
+  }
+
+  get seconds(){
+    return this._clock.seconds;
+  }
+
+  set seconds(s) {
+    const now = this.now();
+    const ticks = this.bpm.timeToTicks(s, now);
+    this.ticks = ticks.valueOf();
+  }
+
   get timeSignature() {
     return this._timeSignature;
   }
@@ -76,16 +107,73 @@ export class TransportCtrl extends Vox {
   }
 
   get loopStart() {
-    return 
+    return (new Vox.Ticks(this._loopStart)).toSeconds();
   }
 
-  private _processTick(tickTIme, ticks) {
+  set loopStart(startPosition) {
+    this._loopStart = this.toTicks(startPosition);
+  }
 
+  private _processTick(tickTime, ticks) {
+    console.log('_processTick');
+    if (this.loop) {
+      if (ticks >= this._loopEnd) {
+        this.emit(['loopEnd', tickTime]);
+        this._clock.setTicksAtTime(this._loopStart, tickTime);
+        ticks = this._loopStart;
+        this.emit(['loopStart', tickTime, this._clock.getSecondsAtTime(tickTime)]);
+        this.emit(['loop', tickTime]);
+      }
+    }
+    this._timeline.forEachAtTime(ticks, function(event) {
+      event.invoke(tickTime);
+    });
+  }
+
+  public schedule(callback, time) {
+    const event = new Vox.TransportEvent(this, {
+      time: (new Vox.TransportTime(time)),
+      callback:  callback,
+    });
+    console.log(event);
+    return this._addEvent(event, this._timeline);
+  }
+
+  public clear(eventId) {
+    if (this._secheduleEvents.hasOwnProperty(eventId)) {
+      const item = this._secheduleEvents[eventId.toString()];
+      item.timeline.remove(item.event);
+      item.event.dispose();
+      delete this._secheduleEvents[eventId.toString()];
+    }
+    return this;
+  }
+
+  private _addEvent(event, timeline) {
+    this._secheduleEvents[event.id.toString()] = {
+      event: event,
+      timeline: timeline,
+    };
+    timeline.add(event);
+    return event.id;
+  }
+
+  public cancelAfter(time?) {
+    time = time === undefined ? 0 : time;
   }
 
   private _bindClockEvents() {
     this._clock.on('start', (time, offset) => {
+      offset = (new Vox.Ticks(offset)).toSeconds();
+      this.emit(['start', time, offset]);
+    });
 
+    this._clock.on('stop', (time) => {
+      this.emit(['stop', time]);
+    });
+
+    this._clock.on('pause', (time) =>  {
+      this.emit(['pause', time]);
     });
   }
 
@@ -97,6 +185,21 @@ export class TransportCtrl extends Vox {
   private _toUnits(freq) {
     return (freq / this.PPQ) * 60;  
   }
+
+  public start(time, offset) {
+    if (Vox.isDefined(offset)) {
+      offset = this.toTicks(offset);
+    }
+    this._clock.start(time, offset);
+    return this;
+  }
+
+  public stop(time) {
+    this._clock.stop(time);
+    return this;
+  }
+
+
 }
 
 if (Vox.VoxTransportCtrl === undefined) {

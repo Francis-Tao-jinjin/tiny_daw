@@ -5,7 +5,7 @@
 import { Vox } from '../core/Vox';
 
 export class Signal extends Vox.VoxAudioParam {
-  private _constantSource:ConstantSourceNode;
+  private _constantSource; //: ConstantSourceNode;
 
   constructor(opt?:{value?, units?}) {
     opt = opt === undefined ? {} : opt;
@@ -13,7 +13,7 @@ export class Signal extends Vox.VoxAudioParam {
     opt.value = opt.value === undefined ? 0 : opt.value;
     super({value: opt.value, units: opt.units});
 
-    this._constantSource = this.context._ctx.createConstantSource();
+    this._constantSource = (this.context._ctx as any).createConstantSource();
 
     this._constantSource.start(0);
 
@@ -30,7 +30,7 @@ export class Signal extends Vox.VoxAudioParam {
   public connect(node:any, outputNumber?:number, inputNumber?:number) {
     if (node.constructor === Vox.Signal || node.constructor === Vox.VoxAudioParam) {
       node._param.cancelScheduledValues(0);
-      node._param.setValueAtTime(0);
+      node._param.setValueAtTime(0, 0);
       node.overridden = true;
     } else if (node instanceof AudioParam) {
       node.cancelScheduledValues(0);

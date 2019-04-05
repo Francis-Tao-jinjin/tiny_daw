@@ -21,6 +21,16 @@ import { Clock } from './Clock';
 import { TickSource } from '../audioSource/TickSource';
 import { Time } from './Time';
 import { Frequency } from './Frequency';
+import { Envelope } from '../components/Envelope';
+import { AmplitudeEnvelope } from '../components/AmplitudeEnvelope';
+import { Instrument } from '../instrument/Instrument';
+import { Oscillator } from '../audioSource/Oscillator';
+import { Synth } from '../instrument/Synth';
+import { Monophonic } from '../instrument/Monophonic';
+import { isNumber, isUndefined, isObject } from 'util';
+import { Ticks } from './Ticks';
+import { TransportEvent } from './TransportEvent';
+import { TransportTime } from './TransportTime';
 
 export class Vox {
   public static VoxContext:typeof VoxContext;
@@ -31,14 +41,24 @@ export class Vox {
   public static TickSource:typeof TickSource;
   public static VoxOscillatorNode:typeof VoxOscillatorNode;
   public static Player:typeof Player;
+  public static Oscillator:typeof Oscillator;
+
 
   public static Signal:typeof Signal;
   public static TickSignal:typeof TickSignal;
+
+  public static Envelope:typeof Envelope;
+  public static AmplitudeEnvelope:typeof AmplitudeEnvelope;
+
+  public static Instrument:typeof Instrument;
+  public static Monophonic:typeof Monophonic;
+  public static Synth:typeof Synth;
 
   public static VoxGain:typeof VoxGain;
   public static TimeBase:typeof TimeBase;
   public static Time:typeof Time;
   public static Frequency:typeof Frequency;
+  public static Ticks:typeof Ticks;
 
   public static Timeline:typeof Timeline;
   public static TimelineState:typeof TimelineState;
@@ -50,10 +70,12 @@ export class Vox {
   public static context:VoxContext;// = new VoxContext(new AudioContext());
   public static VoxMaster:VoxMaster;
   public static VoxTransportCtrl:TransportCtrl;
+  public static TransportEvent:typeof TransportEvent;
+  public static TransportTime:typeof TransportTime;
 
   public name = 'vox';
 
-  private _events = {};
+  private _events:{[key:string]:any[]} = {};
 
   constructor () { 
     // if (!(Vox.context instanceof VoxContext)) {
@@ -84,6 +106,27 @@ export class Vox {
       return this.now();
     } else if (Vox.isString(time)) {
       return (new Vox.Time(time)).toSeconds();
+    }
+  }
+
+  public toFrequency(freq) {
+    console.log('in toFrequency', freq);
+    if (isNumber(freq)) {
+      return freq;
+    } else if (Vox.isString(freq) || isUndefined(freq)) {
+      return (new Vox.Frequency(freq)).valueOf();
+    } else if (freq instanceof Vox.TimeBase) {
+      return freq.toFrequency();
+    }
+  }
+
+  public toTicks(time?) {
+    if (Vox.isNumber(time) || Vox.isString(time)) {
+      return;
+    } else if (Vox.isUndef(time)) {
+      return Vox.VoxTransportCtrl.ticks;
+    } else if (time instanceof Vox.TimeBase) {
+      return time.toTicks();
     }
   }
 
@@ -175,7 +218,7 @@ export class Vox {
     return Math.pow(10, db / 20);
   }
 
-  protected on(event:string, callback:Function) {
+  public on(event:string, callback:Function) {
     if (!this._events.hasOwnProperty(event)) {
       this._events[event] = [];
     }
@@ -183,7 +226,7 @@ export class Vox {
     return this;
   }
 
-  protected once(event:string, callback:() => void) {
+  public once(event:string, callback:() => void) {
     const  self = this;
     function onceWrapper() {
       callback.apply(self, arguments);
@@ -193,15 +236,17 @@ export class Vox {
     return this;
   }
 
-  protected off(event:string, callback:() => void) {
+  public off(event:string, callback:() => void) {
     if (this._events.hasOwnProperty(event)) {
       if (Vox.isUndef(callback)) {
         this._events[event] = [];
       } else {
-        const listeners:[] = this._events[event];
-        for (let i = 0; i < listeners.length; i++) {
-          if (callback === listeners[i]) {
-            listeners.splice(i, 1);
+        const listeners:any[] = this._events[event];
+        if (listeners) {
+          for (let i = 0; i < listeners.length; i++) {
+            if (callback === listeners[i]) {
+              listeners.splice(i, 1);
+            }
           }
         }
       }
@@ -223,7 +268,5 @@ export class Vox {
     }
     return this;
   }
-
-
 }
 
