@@ -39,6 +39,8 @@ export class TransportCtrl extends Vox {
       frequency: 0,
     });
 
+    this._bindClockEvents();
+
     this.bpm = this._clock.frequency;
     this.bpm._toUnits = this._toUnits.bind(this);
     this.bpm._fromUnits = this._fromUnits.bind(this);
@@ -103,7 +105,9 @@ export class TransportCtrl extends Vox {
 
   set PPQ(value) {
     const bpm = this.bpm.value;
-
+    this._ppq = value;
+    // 通过 param 的 value setter 重新设置
+    this.bpm.value = bpm;
   }
 
   get loopStart() {
@@ -115,7 +119,7 @@ export class TransportCtrl extends Vox {
   }
 
   private _processTick(tickTime, ticks) {
-    console.log('_processTick');
+    // console.log('_processTick');
     if (this.loop) {
       if (ticks >= this._loopEnd) {
         this.emit(['loopEnd', tickTime]);
@@ -136,6 +140,15 @@ export class TransportCtrl extends Vox {
       callback:  callback,
     });
     console.log(event);
+    return this._addEvent(event, this._timeline);
+  }
+
+  public scheduleOnce(callback, time) {
+    const event = new Vox.TransportEvent(this, {
+      time: new Vox.TransportTime(time),
+      callback: callback,
+      once: true,
+    });
     return this._addEvent(event, this._timeline);
   }
 

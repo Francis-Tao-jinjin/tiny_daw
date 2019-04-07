@@ -149,6 +149,7 @@ export class TickSource extends Vox{
   }
 
   public forEachTickBetween(startTime, endTime, callback) {
+    // 
     let lastStateEvent = this._state.getMostRecent(startTime);
     this._state.forEachBetween(startTime, endTime, (event) => {
       if (lastStateEvent.state === PlayState.Started && event.state !== PlayState.Started) {
@@ -156,7 +157,7 @@ export class TickSource extends Vox{
       }
       lastStateEvent = event;
     });
-    console.log('lastStateEvent', lastStateEvent);
+    // console.log('lastStateEvent', lastStateEvent);
     startTime = Math.max(lastStateEvent.time, startTime);
     if (lastStateEvent.state === PlayState.Started && this._state) {
       const startTicks = this.frequency.getTicksAtTime(startTime);

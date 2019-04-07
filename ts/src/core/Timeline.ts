@@ -1,6 +1,6 @@
 import { Vox } from './Vox';
 interface timeEvent {
-  time:number;
+  time:any;
   type?:string;
   [name:string]:any;
 };
@@ -21,6 +21,14 @@ export class Timeline extends Vox {
   }
 
   public add(event:timeEvent) {
+    if (Vox.isUndef(event)) {
+      throw new Error('Timeline: add events must have a time attribute')
+    }
+    if (event.time instanceof Vox.Ticks) {
+      console.log('Ticks:', event.time, '->', event.time.valueOf());
+    }
+    event.time = event.time.valueOf();
+    // 按照时间先后插入
     let idx = this._searchAloneTime(event.time);
     this._timeline.splice(idx + 1, 0, event);
     if (idx > this.memory) {
@@ -182,7 +190,7 @@ export class Timeline extends Vox {
       if (this._timeline[start].time !== startTime) {
         start += 1;
       }
-      if (this._timeline[end].time !== endTime) {
+      if (this._timeline[end].time === endTime) {
         end -= 1;
       }
       this._iterate(callback, start, end);

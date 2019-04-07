@@ -18,11 +18,16 @@ export * from './audioSource/Player';
 export * from './audioSource/OscillatorNode';
 export * from './audioSource/Oscillator';
 
-export * from './core/TimeBase';
-export * from './core/Time';
-export * from './core/Frequency';
-export * from './core/TransportTime';
-export * from './core/Ticks';
+// export * from './core/TimeBase';
+// export * from './core/Time';
+// export * from './core/Frequency';
+// export * from './core/TransportTime';
+// export * from './core/Ticks';
+
+export * from './Time/Time';
+export * from './Time/Frequency';
+export * from './Time/TransportTime';
+export * from './Time/Ticks';
 
 export * from './instrument/Instrument';
 export * from './instrument/Monophonic';

@@ -12,15 +12,24 @@ import { VoxSource } from '../audioSource/Source';
 import { VoxBufferSource } from '../audioSource/BufferSource';
 import { VoxOscillatorNode } from '../audioSource/OscillatorNode';
 
+// import { TimeBase } from './TimeBase';
+// import { Time } from './Time';
+// import { Frequency } from './Frequency';
+// import { Ticks } from './Ticks';
+// import { TransportTime } from './TransportTime';
+// import { TimeBase } from './TimeBase';
+import { Time } from '../Time/Time';
+import { Frequency } from '../Time/Frequency';
+import { Ticks } from '../Time/Ticks';
+import { TransportTime } from '../Time/TransportTime';
+
 import { Player } from '../audioSource/Player';
 import { Signal } from '../signal/Signal';
 import { TickSignal } from '../signal/TickSignal';
 import { TransportCtrl } from './TransportCtrl';
-import { TimeBase } from './TimeBase';
 import { Clock } from './Clock';
 import { TickSource } from '../audioSource/TickSource';
-import { Time } from './Time';
-import { Frequency } from './Frequency';
+
 import { Envelope } from '../components/Envelope';
 import { AmplitudeEnvelope } from '../components/AmplitudeEnvelope';
 import { Instrument } from '../instrument/Instrument';
@@ -28,9 +37,7 @@ import { Oscillator } from '../audioSource/Oscillator';
 import { Synth } from '../instrument/Synth';
 import { Monophonic } from '../instrument/Monophonic';
 import { isNumber, isUndefined, isObject } from 'util';
-import { Ticks } from './Ticks';
 import { TransportEvent } from './TransportEvent';
-import { TransportTime } from './TransportTime';
 
 export class Vox {
   public static VoxContext:typeof VoxContext;
@@ -55,7 +62,7 @@ export class Vox {
   public static Synth:typeof Synth;
 
   public static VoxGain:typeof VoxGain;
-  public static TimeBase:typeof TimeBase;
+  // public static TimeBase:typeof TimeBase;
   public static Time:typeof Time;
   public static Frequency:typeof Frequency;
   public static Ticks:typeof Ticks;
@@ -78,21 +85,6 @@ export class Vox {
   private _events:{[key:string]:any[]} = {};
 
   constructor () { 
-    // if (!(Vox.context instanceof VoxContext)) {
-    //   Vox.context = new VoxContext(new AudioContext());
-    //   console.log('create context');
-    // } else {
-    //   console.log('context already exist');
-    // }
-
-    // if (!(Vox.VoxMaster instanceof VoxMaster)) {
-    //   Vox.VoxMaster = new VoxMaster();
-    //   console.log('create master');
-    // } else {
-    //   console.log('master already exist');
-    // }
-    // Vox.context = new VoxContext(new AudioContext());
-    // Vox.VoxMaster = new VoxMaster();
   }
 
   public toString(){
@@ -115,7 +107,7 @@ export class Vox {
       return freq;
     } else if (Vox.isString(freq) || isUndefined(freq)) {
       return (new Vox.Frequency(freq)).valueOf();
-    } else if (freq instanceof Vox.TimeBase) {
+    } else if (freq.TimeObject === true) {
       return freq.toFrequency();
     }
   }
@@ -125,7 +117,7 @@ export class Vox {
       return;
     } else if (Vox.isUndef(time)) {
       return Vox.VoxTransportCtrl.ticks;
-    } else if (time instanceof Vox.TimeBase) {
+    } else if (time.TimeObject === true) {
       return time.toTicks();
     }
   }

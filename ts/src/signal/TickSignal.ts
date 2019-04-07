@@ -14,6 +14,9 @@ export class TickSignal extends Vox.Signal{
       time: 0,
       value: value,
     });
+
+    console.log('new TickSignal, value =', value);
+    console.log('this.units', this.units);
   }
 
   private _wrapScheduleMethods(method) {

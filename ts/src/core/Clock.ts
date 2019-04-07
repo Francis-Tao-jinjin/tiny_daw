@@ -64,14 +64,14 @@ export class Clock extends Vox {
     const startTime = this._lastUpdate;
     const endTime = this.now();
     this._lastUpdate = endTime;
-    // console.log('startTime:', startTime);
-    // console.log('endTime:', endTime);
-
     if (startTime !== endTime) {
       this._state.forEachBetween(startTime, endTime, (e) => {
+        const offset = this._tickSource.getTicksAtTime(e.time);
+        console.log('tick(offset),', offset);
         switch (e.state) {
           case PlayState.Started:
             const offset = this._tickSource.getTicksAtTime(e.time);
+            // console.log('tick(offset),', offset);
             this.emit(['start', e.time, offset]);
             break;
           case PlayState.Stopped:
@@ -85,8 +85,8 @@ export class Clock extends Vox {
         }
       });
       this._tickSource.forEachTickBetween(startTime, endTime, (time, ticks) => {
-        console.log('time', time);
-        console.log('ticks', ticks);
+        // console.log('time', time);
+        // console.log('ticks', ticks);
 
         this.callback(time, ticks);
       });
@@ -100,7 +100,6 @@ export class Clock extends Vox {
 
   public start(time, offset) {
     Vox.context._ctx.resume();
-    
     time = this.toSeconds(time);
     if (this._state.getRecentValueAtTime(time) !== PlayState.Started) {
       this._state.setStateAtTime(PlayState.Started, time);

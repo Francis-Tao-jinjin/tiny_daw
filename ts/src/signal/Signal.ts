@@ -3,13 +3,14 @@
  * 使用另一个信号进行调制
  */
 import { Vox } from '../core/Vox';
+import { VoxType } from '../type';
 
 export class Signal extends Vox.VoxAudioParam {
   private _constantSource; //: ConstantSourceNode;
 
   constructor(opt?:{value?, units?}) {
     opt = opt === undefined ? {} : opt;
-    opt.units = opt.units === undefined ? 0 : opt.units;
+    opt.units = opt.units === undefined ? VoxType.Default : opt.units;
     opt.value = opt.value === undefined ? 0 : opt.value;
     super({value: opt.value, units: opt.units});
 
@@ -28,6 +29,7 @@ export class Signal extends Vox.VoxAudioParam {
   }
 
   public connect(node:any, outputNumber?:number, inputNumber?:number) {
+    console.log('signal Connect');
     if (node.constructor === Vox.Signal || node.constructor === Vox.VoxAudioParam) {
       node._param.cancelScheduledValues(0);
       node._param.setValueAtTime(0, 0);

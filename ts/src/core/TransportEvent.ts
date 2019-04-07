@@ -1,6 +1,6 @@
 import { Vox } from './Vox';
 import { TransportCtrl } from './TransportCtrl';
-import { Ticks } from './Ticks';
+import { Ticks } from '../Time/Ticks';
 
 export class TransportEvent extends Vox {
 
