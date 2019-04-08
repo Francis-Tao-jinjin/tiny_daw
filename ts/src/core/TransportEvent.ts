@@ -21,7 +21,6 @@ export class TransportEvent extends Vox {
     this.callback = opt.callback === undefined ? () => {} : opt.callback;
     this.id = Vox.TransportEvent._eventId++;
     this.time = new Vox.Ticks(opt.time);
-    
   }
 
   public invoke(time) {
@@ -32,7 +31,6 @@ export class TransportEvent extends Vox {
       }
     }
   }
-
 }
 
 Vox.TransportEvent = TransportEvent;

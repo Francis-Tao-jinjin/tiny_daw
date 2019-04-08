@@ -38,6 +38,7 @@ import { Synth } from '../instrument/Synth';
 import { Monophonic } from '../instrument/Monophonic';
 import { isNumber, isUndefined, isObject } from 'util';
 import { TransportEvent } from './TransportEvent';
+import { TransportRepeatEvent } from './TransportRepeatEvent';
 
 export class Vox {
   public static VoxContext:typeof VoxContext;
@@ -49,7 +50,6 @@ export class Vox {
   public static VoxOscillatorNode:typeof VoxOscillatorNode;
   public static Player:typeof Player;
   public static Oscillator:typeof Oscillator;
-
 
   public static Signal:typeof Signal;
   public static TickCounter:typeof TickCounter;
@@ -78,6 +78,7 @@ export class Vox {
   public static VoxMaster:VoxMaster;
   public static VoxTransportCtrl:TransportCtrl;
   public static TransportEvent:typeof TransportEvent;
+  public static TransportRepeatEvent:typeof TransportRepeatEvent;
   public static TransportTime:typeof TransportTime;
 
   public name = 'vox';

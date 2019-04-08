@@ -142,6 +142,16 @@ export class TransportCtrl extends Vox {
     });
   }
 
+  public scheduleRepeat(callback, interval, startTime?, duration?) {
+    const event = new Vox.TransportRepeatEvent(this, {
+      time: new Vox.TransportTime(startTime),
+      interval: new Vox.Time(interval),
+      duration: new Vox.Time((duration === undefined ? Infinity : duration)),
+      callback:  callback,
+    });
+    return this._addEvent(event, this._repeatedEvents);
+  }
+
   public schedule(callback, time) {
     const event = new Vox.TransportEvent(this, {
       time: (new Vox.TransportTime(time)),
@@ -164,7 +174,7 @@ export class TransportCtrl extends Vox {
     if (this._secheduleEvents.hasOwnProperty(eventId)) {
       const item = this._secheduleEvents[eventId.toString()];
       item.timeline.remove(item.event);
-      item.event.dispose();
+      // item.event.dispose();
       delete this._secheduleEvents[eventId.toString()];
     }
     return this;
