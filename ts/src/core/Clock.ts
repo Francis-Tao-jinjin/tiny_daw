@@ -1,7 +1,7 @@
 import { Vox } from './Vox';
 import { PlayState } from '../type';
 import { TickSource } from '../audioSource/TickSource';
-import { TickSignal } from '../signal/TickSignal';
+import { TickCounter } from '../components/TickCounter';
 import { TimelineState } from './TimelineState';
 
 export class Clock extends Vox {
@@ -10,7 +10,7 @@ export class Clock extends Vox {
   private _tickSource:TickSource;
   private _lastUpdate = 0;
   private _state:TimelineState;
-  public readonly frequency:TickSignal;
+  public readonly frequency:TickCounter;
   public callback:Function;
 
   private _boundLoop:Function;

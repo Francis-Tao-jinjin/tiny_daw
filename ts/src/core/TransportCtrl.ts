@@ -1,6 +1,6 @@
 import { Vox } from './Vox';
 import { Clock } from './Clock';
-import { TickSignal } from '../signal/TickSignal';
+import { TickCounter } from '../components/TickCounter';
 import { VoxType, PlayState } from '../type';
 import { Timeline } from './Timeline';
 
@@ -16,7 +16,7 @@ export class TransportCtrl extends Vox {
   private _swingTicks:number;
   private _swingAmount:number;
   private _secheduleEvents:{[key:string]: {event:any, timeline:any}};
-  public readonly bpm:TickSignal;
+  public readonly bpm:TickCounter;
   static default = {
     bpm: 120,
     swing: 0,
@@ -116,6 +116,14 @@ export class TransportCtrl extends Vox {
 
   set loopStart(startPosition) {
     this._loopStart = this.toTicks(startPosition);
+  }
+
+  public getTicksAtTime(time) {
+    return Math.round(this._clock.getTicksAtTime(time));
+  }
+
+  public getSecondsAtTime(time) {
+    return this._clock.getSecondsAtTime(time);
   }
 
   private _processTick(tickTime, ticks) {

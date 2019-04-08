@@ -3,11 +3,11 @@ import { VoxType } from '../type';
 import { Timeline } from './Timeline';
 
 export class VoxAudioParam extends Vox.VoxAudioNode {
-  protected _param:AudioParam;
-  protected _timelineEv:Timeline;
-  protected _initValue:number;
+  public _param:AudioParam;
+  public _timelineEv:Timeline;
+  public _initValue:number;
 
-  protected _miniOutput = 1e-5;
+  public _miniOutput = 1e-5;
   
   public input;
   public units:VoxType;
@@ -42,6 +42,21 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
     this.cancelScheduledValues(this.now());
     this.setValueAtTime(val, this.now());
   }
+
+  // get minValue() {
+  //   if (this.units === VoxType.Time || this.units === VoxType.Frequency ||
+  //       this.units === VoxType.Positive || this.units === VoxType.BPM) {
+  //     return 0;
+  //   } else if (this.units === VoxType.Decibels) {
+  //     return -Infinity;
+  //   } else {
+  //     return this._param.minValue;
+  //   }
+  // }
+
+  // get maxValue() {
+  //   return this._param.maxValue;
+  // }
 
   public setValueCurveAtTime(values, startTime, duration, scaling = 1) {
     duration = this.toSeconds(duration);
@@ -135,6 +150,7 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
   public linearRampTo(value:number, rampTime:number, startTime?:number) {
     startTime = this.toSeconds(startTime);
     this.setRampPoint(startTime);
+    console.log('startTime:', startTime, 'endTime', startTime + this.toSeconds(rampTime));
     this.linearRampToValueAtTime(value, startTime + this.toSeconds(rampTime));
     return this;
   }
@@ -172,6 +188,8 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
     return this;
   }
 
+
+
   public _toUnits(value) {
     if (this.convert || Vox.isDefined(this.convert)) {
       if (this.units === VoxType.Decibels) {
@@ -184,7 +202,7 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
     }
   }
 
-  public _fromUnits = function(value) {
+  public _fromUnits(value) {
     if (this.convert || Vox.isUndef(this.convert)) {
       switch (this.units) {
         case VoxType.Time:
@@ -228,6 +246,7 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
     if (recent === null) {
       value = initValue;
     } else if (recent.type === VoxAudioParam.ActionType.Target) {
+      // 因为 SetTarget 事件的 value 是终止值，所以要获得起始值还要再往前找
       let previous = this._timelineEv.getBefore(recent.time);
       let previousVal;
       if (previous === null) {
@@ -247,6 +266,11 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
     }
     return value;
   }
+
+  ///////////////////////////////////////////////////////////////////////////
+  //	AUTOMATION CURVE CALCULATIONS
+  //	MIT License, copyright (c) 2014 Jordan Santell
+  ///////////////////////////////////////////////////////////////////////////
 
   private _exponentialApproach(t0, v0, v1, timeConstant, t) {
     return v1 + (v0 - v1) * Math.exp(-(t - t0) / timeConstant);

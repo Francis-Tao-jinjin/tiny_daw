@@ -7,9 +7,9 @@ export * from './core/Gain';
 export * from './components/Volume';
 export * from './components/Envelope';
 export * from './components/AmplitudeEnvelope';
+export * from './components/TickCounter';
 
 export * from './signal/Signal';
-export * from './signal/TickSignal';
 
 export * from './audioSource/Source';
 export * from './audioSource/TickSource';

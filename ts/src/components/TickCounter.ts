@@ -1,12 +1,16 @@
 import { Vox } from '../core/Vox';
 import { VoxType } from '../type';
 
-export class TickSignal extends Vox.Signal{
+export class TickCounter extends Vox.VoxAudioParam{
   
   constructor(value?:number) {
     value = value === undefined ? 1 : value;
     super({units:VoxType.Ticks, value:value});
     
+    this.output = Vox.context._ctx.createGain();
+    this.input = this.output.gain;
+    this._param = this.input;
+
     this._timelineEv.memory = Infinity;
     this.cancelScheduledValues(0);
     this._timelineEv.add({
@@ -14,21 +18,41 @@ export class TickSignal extends Vox.Signal{
       time: 0,
       value: value,
     });
-
-    console.log('new TickSignal, value =', value);
-    console.log('this.units', this.units);
   }
 
-  private _wrapScheduleMethods(method) {
-    const self = this;
-    return function (value, time) {
-      time = self.toSeconds(time);
-      method.apply(self, arguments);
-      const event = self._timelineEv.getMostRecent(time);
-    }
+  public setValueAtTime(value, time) {
+    time = this.toSeconds(time);
+    value = this._fromUnits(value);
+    this._timelineEv.add({
+        time,
+        value,
+        type: Vox.VoxAudioParam.ActionType.SetValue,
+    });
+    this._param.setValueAtTime(value, time);
+    const event = this._timelineEv.getMostRecent(time);
+    const previousEvent = this._timelineEv.previousEvent(event);
+    const ticksTillTime = this._getTicksSinceEvent(previousEvent, time);
+    event.ticks = Math.max(ticksTillTime, 0);
+    return this;
   }
 
-  private _getTickUntilEvent(event?, time?:number) {
+  public linearRampToValueAtTime(value, endTime) {
+    value = this._fromUnits(value);
+    endTime = this.toSeconds(endTime);
+    this._timelineEv.add({
+      type: Vox.VoxAudioParam.ActionType.Linear,
+      value: value,
+      time: endTime,
+    });
+    this._param.linearRampToValueAtTime(value, endTime);
+    const event = this._timelineEv.getMostRecent(endTime);
+    const previousEvent = this._timelineEv.previousEvent(event);
+    const ticksTillTime = this._getTicksSinceEvent(previousEvent, endTime);
+    event.ticks = Math.max(ticksTillTime, 0);
+    return this;
+  }
+
+  private _getTicksSinceEvent(event?, time?:number) {
     if (event === null) {
       event = {
         ticks: 0,
@@ -36,7 +60,7 @@ export class TickSignal extends Vox.Signal{
       };
     } else if (Vox.isUndef(event.ticks)) {
       const previousEvent = this._timelineEv.previousEvent(event);
-      event.ticks = this._getTickUntilEvent(previousEvent, event.time);
+      event.ticks = this._getTicksSinceEvent(previousEvent, event.time);
     }
     const val0 = this.getValueAtTime(event.time);
     let val1 = this.getValueAtTime(time);
@@ -51,7 +75,7 @@ export class TickSignal extends Vox.Signal{
   public getTicksAtTime(time) {
     time = this.toSeconds(time);
     const event = this._timelineEv.getMostRecent(time);
-    return Math.max(this._getTickUntilEvent(event, time), 0);
+    return Math.max(this._getTicksSinceEvent(event, time), 0);
   }
 
   public getTimeOfTick(tick) {
@@ -100,4 +124,4 @@ export class TickSignal extends Vox.Signal{
   }
 }
 
-Vox.TickSignal = TickSignal;
+Vox.TickCounter = TickCounter;

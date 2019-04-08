@@ -1,19 +1,19 @@
 import { Vox } from '../core/Vox';
-import { TickSignal } from '../signal/TickSignal';
+import { TickCounter } from '../components/TickCounter';
 import { TimelineState } from '../core/TimelineState';
 import { PlayState } from '../type';
 import { Timeline } from '../core/Timeline';
 
 export class TickSource extends Vox{
 
-  public readonly frequency:TickSignal;
+  public readonly frequency:TickCounter;
 
   private _tickOffset:Timeline;
   private _state:TimelineState;
   constructor(frequency?:number) {
     super();
     frequency = frequency === undefined ? 1 : frequency;
-    this.frequency = new Vox.TickSignal(frequency);
+    this.frequency = new Vox.TickCounter(frequency);
     
     this._state = new Vox.TimelineState(PlayState.Stopped);
     this._state.setStateAtTime(PlayState.Stopped, 0);

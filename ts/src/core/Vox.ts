@@ -25,7 +25,7 @@ import { TransportTime } from '../Time/TransportTime';
 
 import { Player } from '../audioSource/Player';
 import { Signal } from '../signal/Signal';
-import { TickSignal } from '../signal/TickSignal';
+import { TickCounter } from '../components/TickCounter';
 import { TransportCtrl } from './TransportCtrl';
 import { Clock } from './Clock';
 import { TickSource } from '../audioSource/TickSource';
@@ -52,7 +52,7 @@ export class Vox {
 
 
   public static Signal:typeof Signal;
-  public static TickSignal:typeof TickSignal;
+  public static TickCounter:typeof TickCounter;
 
   public static Envelope:typeof Envelope;
   public static AmplitudeEnvelope:typeof AmplitudeEnvelope;
