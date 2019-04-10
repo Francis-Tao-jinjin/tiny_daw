@@ -133,6 +133,7 @@ export class Oscillator extends VoxSource {
   }
 
   public _start(time?) {
+    this._stop(time);
     this._oscillator = new Vox.VoxOscillatorNode();
     this._oscillator.setPeriodicWave(this._wave);
     this._oscillator.connect(this.output);

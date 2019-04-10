@@ -5,7 +5,7 @@ interface timeEvent {
   [name:string]:any;
 };
 
-export class Timeline extends Vox {
+export class Timeline extends Vox{
   
   public _timeline:timeEvent[] = [];
 
@@ -21,13 +21,10 @@ export class Timeline extends Vox {
   }
 
   public add(event:timeEvent) {
-    if (Vox.isUndef(event)) {
+    if (event.time === undefined ) {
       throw new Error('Timeline: add events must have a time attribute')
     }
-    if (event.time instanceof Vox.Ticks) {
-      console.log('Ticks:', event.time, '->', event.time.valueOf());
-    }
-    if (typeof event.time !== 'number') {
+    if (typeof event.time !== 'number' && event.valueOf !== undefined) {
       event.time = event.time.valueOf();
     }
     // event.time = event.time.valueOf();

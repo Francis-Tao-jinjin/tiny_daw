@@ -20,7 +20,6 @@ export abstract class Instrument extends Vox.VoxAudioNode {
     this._volume = this.output = new Vox.Volume(opt.volume);
 
     this.volume = this._volume.volume;
-
   }
 
 

@@ -3,14 +3,16 @@ import { Monophonic } from './Monophonic';
 import { OscilType } from '../type';
 import { Oscillator } from '../audioSource/Oscillator';
 import { Signal } from '../signal/Signal';
-import { AmplitudeEnvelope } from '../components/AmplitudeEnvelope';
+// import { AmplitudeEnvelope } from '../components/AmplitudeEnvelope';
+import { Envelope } from '../components/Envelope';
 
 export class Synth extends Monophonic {
   
   public readonly oscillator:Oscillator;
   public readonly frequency:Signal;
   public readonly detuen:Signal;
-  public readonly envelope:AmplitudeEnvelope;
+  // public readonly envelope:AmplitudeEnvelope;
+  public readonly envelope:Envelope;  
 
   constructor(opt?) {
     super(opt);
@@ -20,13 +22,13 @@ export class Synth extends Monophonic {
     opt.envelope.attack = opt.envelope.attack === undefined ? 0.005 : opt.envelope.attack;
     opt.envelope.decay = opt.envelope.decay === undefined ? 0.1 : opt.envelope.decay;
     opt.envelope.sustain = opt.envelope.sustain === undefined ? 0.3 : opt.envelope.sustain;
-    opt.envelope.release = opt.envelope.release === undefined ? 1 : opt.envelope.release;
+    opt.envelope.release = opt.envelope.release === undefined ? 0.5 : opt.envelope.release;
     
     this.oscillator = new Vox.Oscillator(opt.oscillator);
     this.frequency = this.oscillator.frequency;
     this.detuen = this.oscillator.detune;
-    this.envelope = new Vox.AmplitudeEnvelope(opt.envelope);
-    
+    // this.envelope = new Vox.AmplitudeEnvelope(opt.envelope);
+    this.envelope = new Vox.Envelope(opt.envelope);
     this.oscillator.connect(this.envelope);
     this.envelope.connect(this.output);
   }

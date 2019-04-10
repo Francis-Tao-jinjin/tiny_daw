@@ -170,7 +170,7 @@ export class VoxBufferSource extends Vox.VoxAudioNode {
     Vox.context.clearTimeout(this._onendedTimeout);
     this._onendedTimeout = Vox.context.setTimeout(this._onended.bind(this), this._stopTime - this.now());
 
-	  return this;
+    return this;
   }
 
   public cancelStop() {
