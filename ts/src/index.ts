@@ -1,6 +1,7 @@
 export * from './core/AudioNode';
 export * from './core/AudioParam';
 export * from './core/Timeline';
+export * from './core/IntervalTimeTree';
 export * from './core/TimelineState';
 export * from './core/Buffer';
 export * from './core/Gain';
@@ -37,5 +38,6 @@ export * from './core/Context';
 export * from './core/Master';
 export * from './core/Clock';
 export * from './core/TransportEvent';
+export * from './core/TransportRepeatEvent';
 export * from './core/TransportCtrl';
 export * from './core/Vox';

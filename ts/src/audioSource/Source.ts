@@ -64,18 +64,25 @@ export abstract class VoxSource extends Vox.VoxAudioNode {
       time = this.toSeconds(time);
       time = Math.max(time, this.context._ctx.currentTime);
     }
-    if (this._state.getRecentValueAtTime(time) === PlayState.Started) {
-      this._state.cancelAfter(time);
-      this._state.setStateAtTime(PlayState.Started, time);
-      this.restart(time, offset, duration);
-    } else {
-      this._state.setStateAtTime(PlayState.Started, time);
-      if (this._synced) {
 
-      } else {
-        this._start.apply(this, arguments);
-      }
-    }
+    this._state.cancelAfter(time);
+    this._state.setStateAtTime(PlayState.Started, time);
+    this._start.apply(this, arguments);
+
+    // if (this._state.getRecentValueAtTime(time) === PlayState.Started) {
+    //   console.log('^^ RecentValueAtTime', time, 'is Start');
+    //   this._state.cancelAfter(time);
+    //   this._state.setStateAtTime(PlayState.Started, time);
+    //   this.restart(time, offset, duration);
+    // } else {
+    //   console.log('VV RecentValueAtTime', time, 'is Start');
+    //   this._state.setStateAtTime(PlayState.Started, time);
+    //   if (this._synced) {
+
+    //   } else {
+    //     this._start.apply(this, arguments);
+    //   }
+    // }
     return this;
   }
 

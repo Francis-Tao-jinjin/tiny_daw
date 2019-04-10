@@ -51,7 +51,7 @@ export class TransportRepeatEvent extends Vox.TransportEvent {
     this._nextId = this.transportCtrl.scheduleOnce(this.invoke.bind(this), new Vox.Ticks(this._nextTick));
   }
 
-  public Invoke(time) {
+  public invoke(time) {
     this._createEvents(time);
     Vox.TransportEvent.prototype.invoke.call(this, time);
   }
@@ -66,6 +66,12 @@ export class TransportRepeatEvent extends Vox.TransportEvent {
       this._currentId = this._nextId;
       this._nextId = this.transportCtrl.scheduleOnce(this.invoke.bind(this), new Vox.Ticks(this._nextTick));
     }
+  }
+
+  public dispose() {
+    this.transportCtrl.clear(this._currentId);
+    this.transportCtrl.clear(this._nextId);
+    
   }
 }
 

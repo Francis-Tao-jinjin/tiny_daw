@@ -1,6 +1,6 @@
 import { Vox } from './Vox';
 
-export class IntervalTimeline extends Vox {
+export class IntervalTimeTree extends Vox {
     private _root:IntervalNode;
     private _length = 0;
 
@@ -13,7 +13,9 @@ export class IntervalTimeline extends Vox {
         if (Vox.isUndef(event.time) || Vox.isUndef(event.duration)) {
             throw new Error('IntervalTimeline: events must have time and duration parameters');
         }
-        event.time = event.time.valueOf();
+        if (typeof event.time !== 'number') {
+            event.time = event.time.valueOf();
+        }
         let node = new IntervalNode(event.time, event.time + event.duration, event)
         if (this._root === null) {
             this._root = node;
@@ -37,10 +39,78 @@ export class IntervalTimeline extends Vox {
             for (let i = 0; i < result.length; i++) {
                 const node = result[i];
                 if (node.event === event) {
-                    
+                    this._removeNode(node);
+                    this._length--;
+                    break;
                 }
             }
         }
+        return this;
+    }
+
+    get length() {
+        return this._length;
+    }
+
+    public cancel(after) {
+        this.forEachFrom(after, () => {
+
+        });
+    }
+
+    public getMostRecent(time) {
+        if (this._root !== null) {
+            const result = [];
+            this._root.search(time, result);
+            if (result.length > 0) {
+                let recent = result[0];
+                for (let i = result.length - 1; i >= 0; i--) {
+                    if (result[i].low > recent.low) {
+                        recent = result[i];
+                    }
+                }
+                return recent.event;
+            }
+        }
+        return null;
+    }
+
+    public forEach(callback) {
+        if (this._root !== null) {
+            const allNodes = [];
+            this._root.traverse((node) => {
+                allNodes.push(node);
+            });
+            for (var i = 0; i < allNodes.length; i++){
+                var ev = allNodes[i].event;
+                if (ev){
+                    callback(ev);
+                }
+            }
+        }
+        return this;
+    }
+
+    public forEachAtTime(time, callback) {
+        if (this._root !== null) {
+            const result = [];
+            this._root.search(time, result);
+            for (let i = result.length - 1; i >= 0; i--) {
+                callback(result[i].event);
+            }
+        }
+        return this;
+    }
+
+    public forEachFrom(time, callback) {
+        if (this._root !== null) {
+            const result = [];
+            this._root.searchAfter(time, result);
+            for (let i = result.length - 1; i >= 0; i--) {
+                callback(result[i].event);
+            }
+        }
+        return this;
     }
 
     private _replaceNodeInParent(node, replacement) {
@@ -65,7 +135,50 @@ export class IntervalTimeline extends Vox {
             this._replaceNodeInParent(node, node.right);
         } else {
             const balance = node.getBalance();
+            let pivotNode;
+            let temp;
+            if (balance > 0) {
+                if (node.left.right === null) {
+                    pivotNode = node.left;
+                    pivotNode.right = node.right;
+                    temp = pivotNode;
+                } else {
+                    pivotNode = node.left.right;
+                    while(pivotNode.right !== null) {
+                        pivotNode = pivotNode.right;
+                    }
+                    pivotNode.parent.right = pivotNode.left;
+                    temp = pivotNode.parent;
+                    pivotNode.left = node.left;
+                    pivotNode.right = node.right;
+                }
+            } else if (node.right.left === null) {
+                pivotNode = node.right;
+                pivotNode.left = node.left;
+                temp = pivotNode;
+            } else {
+                // 当被删除节点的右子树有左子树时，一直找到最底部的左子树
+                pivotNode = node.right.left;
+                while (pivotNode.left !== null) {
+                    pivotNode = pivotNode.left;
+                }
+                pivotNode.parent.left = pivotNode.right;
+                temp = pivotNode.parent;
+                pivotNode.left = node.left;
+                pivotNode.right = node.right;
+            }
+            if (node.parent !== null) {
+                if (node.isLeftChild()) {
+                    node.parent.left = pivotNode;
+                } else {
+                    node.parent.right = pivotNode;
+                }
+            } else {
+                this._setRoot(pivotNode);
+            }
+            this._rebalance(temp);
         }
+        node.dispose();
     }
 
     private _rotateLeft(node) {
@@ -121,7 +234,7 @@ export class IntervalTimeline extends Vox {
             } else {
                 this._rotateRight(node);
             }
-        } else {
+        } else if (balance < -1) {
             if (node.right.getBalance() > 0){
                 this._rotateRight(node.right);
             } else {
@@ -131,6 +244,8 @@ export class IntervalTimeline extends Vox {
     } 
 
 }
+
+Vox.IntervalTimeTree = IntervalTimeTree;
 
 class IntervalNode {
 
@@ -211,7 +326,6 @@ class IntervalNode {
 
     set right(node) {
         this.max = this.high;
-
     }
 
     public search(value, result) {
@@ -233,6 +347,19 @@ class IntervalNode {
         }
     }
 
+    // 查找起始时间在value之后的
+    public searchAfter(value, result) {
+        if (this.low >= value) {
+            result.push(this);
+            if (this.left !== null) {
+                this.left.searchAfter(value, result);
+            }
+        }
+        if (this.right !== null) {
+            this.right.searchAfter(value, result);
+        }
+    }
+
     public traverse(callback) {
         callback(this);
         if (this.left !== null) {
@@ -250,12 +377,20 @@ class IntervalNode {
         } else if (this.left !== null) {
             balance = this.left.height + 1;
         } else if (this.right !== null) {
-            balance = this.right.height + 1;
+            balance = -(this.right.height + 1);
         }
+        // 左正右负 
         return balance;
     }
 
     public isLeftChild() {
         return this.parent !== null && this.parent.left === this;
+    }
+
+    public dispose() {
+        this.parent = null;
+        this._left = null;
+        this._right = null;
+        this.event = null;
     }
 }

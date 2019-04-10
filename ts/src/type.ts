@@ -16,8 +16,8 @@ export enum VoxTick {
 }
 
 export enum PlayState {
-  Started,
   Stopped,
+  Started,
   Paused,
 }
 

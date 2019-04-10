@@ -27,7 +27,10 @@ export class Timeline extends Vox {
     if (event.time instanceof Vox.Ticks) {
       console.log('Ticks:', event.time, '->', event.time.valueOf());
     }
-    event.time = event.time.valueOf();
+    if (typeof event.time !== 'number') {
+      event.time = event.time.valueOf();
+    }
+    // event.time = event.time.valueOf();
     // 按照时间先后插入
     let idx = this._searchAloneTime(event.time);
     this._timeline.splice(idx + 1, 0, event);
@@ -177,11 +180,22 @@ export class Timeline extends Vox {
     return this;
   }
 
+  // 从目标时间之后开始
   public forEachAfter(time, callback) {
     const start = this._searchAloneTime(time);
     this._iterate(callback, start + 1);
     return this;
-  } 
+  }
+
+  // 从目标时间开始，有多个相同起始时间的就从第一个开始
+  public forEachFrom(time, callback) {
+    let start = this._searchAloneTime(time);
+    while(start >=0 && this._timeline[start].time >= time) {
+      start--;
+    }
+    this._iterate(callback, start + 1);
+    return this;
+  }
 
   public forEachBetween(startTime, endTime, callback) {
     let end = this._searchAloneTime(endTime);

@@ -1,3 +1,5 @@
+import { Vox } from '../core/Vox';
+
 export const expressions = {
   n: {  //音符
     regexp: /^(\d+)n(\.?)$/i,
@@ -47,8 +49,33 @@ export const expressions = {
 		method : function(capture){
 			return this.now() + (new this.constructor(capture)).valueOf();
 		}
-	},
+  },
+  note: {
+    regexp: /^([a-g]{1}(?:b|#)?)([0-9]+)/i,
+    method: function(pitch, octave) {
+      var index = noteToScaleIndex[pitch.toLowerCase()];
+			var noteNumber = index + (parseInt(octave) + 1) * 12;
+			if (this._defaultUnits === "midi"){
+				return noteNumber;
+			} else {
+				return Vox.Frequency.mtof(noteNumber);
+			}
+    }
+  },
   default: {
     regexp: /^(\d+(?:\.\d+))$/,
+    method : function(value){
+			return expressions[this._defaultUnits].method.call(this, value);
+		}
   }
+}
+
+const noteToScaleIndex = {
+  cb: -1, c: 0, 'c#': 1,
+  db:  1, d: 2, 'd#': 3,
+  eb:  3, e: 4, 'e#': 5,
+  fb:  4, f: 5, 'f#': 6,
+  gb:  6, g: 7, 'g#': 8,
+  ab:  8, a: 9, 'a#': 10,
+  bb: 10, b: 11, 'b#': 12,
 }

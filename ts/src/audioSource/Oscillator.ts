@@ -133,7 +133,6 @@ export class Oscillator extends VoxSource {
   }
 
   public _start(time?) {
-    console.log('start');
     this._oscillator = new Vox.VoxOscillatorNode();
     this._oscillator.setPeriodicWave(this._wave);
     this._oscillator.connect(this.output);
@@ -141,6 +140,7 @@ export class Oscillator extends VoxSource {
     this.detune.connect(this._oscillator.detune);
 
     time = this.toSeconds(time);
+    console.log('this._oscillator.start', time);
     this._oscillator.start(time);
   }
 

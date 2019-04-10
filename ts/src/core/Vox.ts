@@ -39,6 +39,7 @@ import { Monophonic } from '../instrument/Monophonic';
 import { isNumber, isUndefined, isObject } from 'util';
 import { TransportEvent } from './TransportEvent';
 import { TransportRepeatEvent } from './TransportRepeatEvent';
+import { IntervalTimeTree } from './IntervalTimeTree';
 
 export class Vox {
   public static VoxContext:typeof VoxContext;
@@ -68,6 +69,7 @@ export class Vox {
   public static Ticks:typeof Ticks;
 
   public static Timeline:typeof Timeline;
+  public static IntervalTimeTree:typeof IntervalTimeTree;
   public static TimelineState:typeof TimelineState;
   public static VoxAudioParam:typeof VoxAudioParam;
   
@@ -103,7 +105,6 @@ export class Vox {
   }
 
   public toFrequency(freq) {
-    console.log('in toFrequency', freq);
     if (isNumber(freq)) {
       return freq;
     } else if (Vox.isString(freq) || isUndefined(freq)) {
@@ -212,10 +213,14 @@ export class Vox {
   }
 
   public on(event:string, callback:Function) {
-    if (!this._events.hasOwnProperty(event)) {
-      this._events[event] = [];
+    const events = event.split(/\W+/);
+    for (let i = 0; i < events.length; i++) {
+      const eventName = events[i];
+      if (!this._events.hasOwnProperty(eventName)) {
+        this._events[eventName] = [];
+      }
+      this._events[eventName].push(callback);
     }
-    this._events[event].push(callback);
     return this;
   }
 
@@ -230,15 +235,19 @@ export class Vox {
   }
 
   public off(event:string, callback:() => void) {
-    if (this._events.hasOwnProperty(event)) {
-      if (Vox.isUndef(callback)) {
-        this._events[event] = [];
-      } else {
-        const listeners:any[] = this._events[event];
-        if (listeners) {
-          for (let i = 0; i < listeners.length; i++) {
-            if (callback === listeners[i]) {
-              listeners.splice(i, 1);
+    const events = event.split(/\W+/);
+    for (let j = 0; j < events.length; j++) {
+      const eventName = events[j];
+      if (this._events.hasOwnProperty(eventName)) {
+        if (Vox.isUndef(callback)) {
+          this._events[eventName] = [];
+        } else {
+          const listeners:any[] = this._events[eventName];
+          if (listeners) {
+            for (let i = 0; i < listeners.length; i++) {
+              if (callback === listeners[i]) {
+                listeners.splice(i, 1);
+              }
             }
           }
         }

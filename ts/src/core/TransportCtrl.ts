@@ -3,6 +3,7 @@ import { Clock } from './Clock';
 import { TickCounter } from '../components/TickCounter';
 import { VoxType, PlayState } from '../type';
 import { Timeline } from './Timeline';
+import { IntervalTimeTree } from './IntervalTimeTree';
 
 export class TransportCtrl extends Vox {
   
@@ -13,10 +14,12 @@ export class TransportCtrl extends Vox {
   private _timeSignature:number;
   private _clock:Clock;
   private _timeline:Timeline;
+  private _repeatedEvents:IntervalTimeTree;
   private _swingTicks:number;
   private _swingAmount:number;
   private _secheduleEvents:{[key:string]: {event:any, timeline:any}};
   public readonly bpm:TickCounter;
+
   static default = {
     bpm: 120,
     swing: 0,
@@ -51,6 +54,7 @@ export class TransportCtrl extends Vox {
 
     this._secheduleEvents = {};
     this._timeline = new Vox.Timeline(Infinity);
+    this._repeatedEvents = new Vox.IntervalTimeTree();
 
     this._swingTicks = TransportCtrl.default.PPQ;
     this._swingAmount = 0;
@@ -144,7 +148,7 @@ export class TransportCtrl extends Vox {
 
   public scheduleRepeat(callback, interval, startTime?, duration?) {
     const event = new Vox.TransportRepeatEvent(this, {
-      time: new Vox.TransportTime(startTime),
+      time: new Vox.TransportTime(startTime === undefined ? 0 : startTime),
       interval: new Vox.Time(interval),
       duration: new Vox.Time((duration === undefined ? Infinity : duration)),
       callback:  callback,
@@ -191,6 +195,13 @@ export class TransportCtrl extends Vox {
 
   public cancelAfter(time?) {
     time = time === undefined ? 0 : time;
+    time = this.toTicks(time);
+    this._timeline.forEachFrom(time, (event) => {
+      this.clear(event.id);
+    });
+    this._repeatedEvents.forEachFrom(time, (event) => {
+      this.clear(event.id);
+    });
   }
 
   private _bindClockEvents() {

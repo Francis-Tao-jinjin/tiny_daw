@@ -67,7 +67,6 @@ export class Clock extends Vox {
     if (startTime !== endTime) {
       this._state.forEachBetween(startTime, endTime, (e) => {
         const offset = this._tickSource.getTicksAtTime(e.time);
-        console.log('tick(offset),', offset);
         switch (e.state) {
           case PlayState.Started:
             const offset = this._tickSource.getTicksAtTime(e.time);

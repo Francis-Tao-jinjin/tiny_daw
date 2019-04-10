@@ -114,8 +114,8 @@ export class Envelope extends Vox.VoxAudioNode {
     }
 
     public triggerAttack(time?, velocity?) {
-        console.log('triggerAttack', time, velocity)
-        time = this.toSeconds(this.attack);
+        
+        time = this.toSeconds(time);
         let originalAttack = this.toSeconds(this.attack);
         let attack = originalAttack;
         const decay = this.toSeconds(this.decay);
@@ -129,7 +129,9 @@ export class Envelope extends Vox.VoxAudioNode {
         }
 
         if (this._attackCurve === linear) {
-            this.sig.linearRampTo(velocity, attack, time);
+            this.sig.linearRampTo(1, attack, time);
+            // console.log('>> triggerAttack', time, 'ctxCurrent', Vox.context._ctx.currentTime);
+            // console.log('>> current Envelop Value', currentValue);
         } else if (this._attackCurve === exponential) {
             this.sig.targetRampTo(velocity, attack, time);
         } else if (attack > 0) {

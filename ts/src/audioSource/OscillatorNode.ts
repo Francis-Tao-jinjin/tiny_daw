@@ -52,9 +52,13 @@ export class VoxOscillatorNode extends Vox.VoxAudioNode {
   public start(time?:number) {
     if (this._startTime === -1) {
       this._startTime = this.toSeconds(time);
-      this._startTime = Math.max(this._startTime, this.context._ctx.currentTime);
-      this._oscillator.start(this._startTime);
+			this._oscillator.start(this._startTime);
       this._gainNode.gain.setValueAtTime(1, this._startTime);
+      
+      // this._startTime = this.toSeconds(time);
+      // this._startTime = Math.max(this._startTime, this.context._ctx.currentTime);
+      // this._oscillator.start(this._startTime);
+      // this._gainNode.gain.setValueAtTime(1, this._startTime);
     } else {
       console.warn('OscillatorNode 已经 start 过了');
     }
@@ -63,20 +67,22 @@ export class VoxOscillatorNode extends Vox.VoxAudioNode {
 
   public stop(time) {
     if (this._startTime === -1) {
-      console.warn('必须现调用 satrt 才能 stop');
-      return;
+      throw new Error('必须现调用 satrt 才能 stop');
     }
     this.cancelStop();
     this._stopTime = this.toSeconds(time);
     this._stopTime = Math.max(this._stopTime, this.context._ctx.currentTime);
     if (this._stopTime > this._startTime) {
       this._gainNode.gain.setValueAtTime(0, this._stopTime);
-      this._timeout = this.context.setTimeout(function(){
+      this.context.clearTimeout(this._timeout);
+      this._timeout = this.context.setTimeout(() => {
         this._oscillator.stop(this.now());
-        this.onended();
-      }.bind(this), this._stopTime - this.context._ctx.currentTime);
+        this.onended(this.now());
+      }, this._stopTime - this.context._ctx.currentTime);
     } else {
-
+      this._gainNode.gain.cancelScheduledValues(this._startTime);
+      console.log('** this._stopTime', this._stopTime);
+      console.log('** this._startTime', this._startTime);
     }
     return this;
   }

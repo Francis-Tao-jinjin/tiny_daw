@@ -73,13 +73,11 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
     time = this.toSeconds(time);
     this._timelineEv.cancelAfter(time);
     this._param.cancelScheduledValues(time);
-    console.log('cancelScheduledValues', time);
     return this;
   }
 
   public cancelAndHoldAtTime(time) {
     const valueAtTime = this.getValueAtTime(time);
-    console.log('cancelScheduledValues', time, 'value = ', valueAtTime);
     this._param.cancelScheduledValues(time);
     const recent = this._timelineEv.getMostRecent(time);
     const after = this._timelineEv.getAfter(time);
@@ -116,7 +114,6 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
       type: VoxAudioParam.ActionType.SetValue,
     });
     this._param.setValueAtTime(value, time);
-    console.log(VoxAudioParam.ActionType.SetValue, value, time);
     return this;
   }
 
@@ -150,7 +147,6 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
   public linearRampTo(value:number, rampTime:number, startTime?:number) {
     startTime = this.toSeconds(startTime);
     this.setRampPoint(startTime);
-    console.log('startTime:', startTime, 'endTime', startTime + this.toSeconds(rampTime));
     this.linearRampToValueAtTime(value, startTime + this.toSeconds(rampTime));
     return this;
   }
@@ -169,7 +165,6 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
       value: value,
       time: endTime,
     });
-    console.log(VoxAudioParam.ActionType.Linear, value, endTime);
     this._param.linearRampToValueAtTime(value, endTime);
     return this;
   }
@@ -183,7 +178,6 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
       time: endTime,
       value: value,
     });
-    console.log(VoxAudioParam.ActionType.Exponential, value, endTime);
     this._param.exponentialRampToValueAtTime(value, endTime);
     return this;
   }
@@ -232,7 +226,6 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
       time: startTime,
       constant: timeConstant,
     });
-    console.log('setTargetAtTime', value, startTime, timeConstant);
     this._param.setTargetAtTime(value, startTime, timeConstant);
     return this;
   }

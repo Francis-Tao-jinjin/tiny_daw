@@ -34,6 +34,7 @@ export class Synth extends Monophonic {
   protected _triggerEnvelopeAttack(time, velocity) {
     this.envelope.triggerAttack(time, velocity);
     this.oscillator.start(time);
+    console.log('## oscillator start', time);
     if (this.envelope.sustain === 0) {
       this.oscillator.stop(time + this.envelope.attack + this.envelope.decay);
     }
@@ -44,6 +45,7 @@ export class Synth extends Monophonic {
     time = this.toSeconds(time);
     this.envelope.triggerRelease(time);
     this.oscillator.stop(time + this.envelope.release);
+    console.log('@@ oscillator stop', time + this.envelope.release);
     return this;
   }
 }
