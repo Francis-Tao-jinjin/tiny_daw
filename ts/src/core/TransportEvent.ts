@@ -31,6 +31,13 @@ export class TransportEvent extends Vox {
       }
     }
   }
+
+  public dispose() {
+    this.transportCtrl = null;
+    this.callback = null;
+    this.time = null;
+    return this;
+  }
 }
 
 Vox.TransportEvent = TransportEvent;

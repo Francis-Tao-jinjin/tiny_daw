@@ -12,7 +12,7 @@ export class TransportRepeatEvent extends Vox.TransportEvent {
   public _nextId:number;
   public _nextTick:number;
 
-  private _boundRestart:Function;
+  private _boundRestart:() => void;
 
   constructor(transportCtrl, opt?) {
     super(transportCtrl, opt);
@@ -71,7 +71,12 @@ export class TransportRepeatEvent extends Vox.TransportEvent {
   public dispose() {
     this.transportCtrl.clear(this._currentId);
     this.transportCtrl.clear(this._nextId);
-    
+    this.transportCtrl.off("start loopStart", this._boundRestart);
+    Vox.TransportEvent.prototype.dispose.call(this);
+    this._boundRestart = null;
+    this.duration = null;
+    this._interval = null;
+    return this;
   }
 }
 
