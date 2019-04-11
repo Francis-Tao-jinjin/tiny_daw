@@ -12,7 +12,7 @@ export class Loop extends Vox {
     
     public startOffset = 0;
 
-    constructor(callback, data) {
+    constructor(callback, data?) {
         super();
 
         this.callback = callback;
@@ -100,12 +100,24 @@ export class Loop extends Vox {
         return new Vox.Ticks(this._loopEnd).toSeconds();
     }
 
-    set loopEnd(value) {
+    set loopEnd(value:any) {
         this._loopEnd = this.toTicks(value);
 		if (this._loop){
 			this._rescheduleEvents();
 		}
     }
+
+    get loopStart() {
+        return new Vox.Ticks(this._loopStart).toSeconds();
+    }
+
+    set loopStart(value:any) {
+        this._loopStart = this.toTicks(value);
+		if (this._loop){
+			this._rescheduleEvents();
+		}
+    }
+
 
     get playbackRate() {
         return this._playbackRate;
