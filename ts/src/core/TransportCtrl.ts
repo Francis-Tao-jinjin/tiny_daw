@@ -178,7 +178,9 @@ export class TransportCtrl extends Vox {
     if (this._secheduleEvents.hasOwnProperty(eventId)) {
       const item = this._secheduleEvents[eventId.toString()];
       item.timeline.remove(item.event);
-      // item.event.dispose();
+      console.log('remove', item.event);
+      console.log('timeline', item.timeline);
+      item.event.dispose();
       delete this._secheduleEvents[eventId.toString()];
     }
     return this;
@@ -240,8 +242,6 @@ export class TransportCtrl extends Vox {
     this._clock.stop(time);
     return this;
   }
-
-
 }
 
 if (Vox.VoxTransportCtrl === undefined) {

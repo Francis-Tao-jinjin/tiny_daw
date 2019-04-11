@@ -1,7 +1,9 @@
 import { Vox } from '../core/Vox';
 import { Signal } from '../signal/Signal';
-import { FadeCurve } from '../type';
+import { FadeCurve, VoxType } from '../type';
 import { isObject, isArray } from 'util';
+import { VoxGain } from '../core/Gain';
+import { VoxAudioParam } from '../core/AudioParam';
 
 const linear = 'linear';
 const exponential = 'exponential';
@@ -27,8 +29,9 @@ export class Envelope extends Vox.VoxAudioNode {
     public _attackCurve;
     private _decayCurve;
     public _releaseCurve;
+    // protected sig:Signal;
 
-    protected sig:Signal;
+    protected sig:VoxAudioParam;
 
     constructor(opt?:{
             attack?,
@@ -48,14 +51,22 @@ export class Envelope extends Vox.VoxAudioNode {
         this.release = ( opt.release === undefined ) ? EnvelopeDefault.release : opt.release;
         
         this._attackCurve = linear;
+        // this._releaseCurve = linear;
         this._releaseCurve = exponential;
-        this.sig = this.output = new Vox.Signal({value:0});
-        
+        // this.sig = this.output = new Vox.Signal({value:0});
+        this.input = this.output = new Vox.VoxGain(0);
+        const a_rate = this.output.gain._param;
+        this.sig = new Vox.VoxAudioParam({
+            param: a_rate,
+            units: VoxType.Default,
+        });
         this.attackCurve = opt.attackCurve === undefined ? linear : opt.attackCurve;
         this.releaseCurve = opt.releaseCurve === undefined ? exponential : opt.releaseCurve;
         this.decayCurve = opt.decayCurve === undefined ? exponential : opt.decayCurve;
+        // this.releaseCurve = opt.releaseCurve === undefined ? linear : opt.releaseCurve;
+        // this.decayCurve = opt.decayCurve === undefined ? linear : opt.decayCurve;
 
-        this.connect = Vox.Signal.prototype.connect.bind(this);
+        // this.connect = Vox.Signal.prototype.connect.bind(this);
     }
 
     private _getCurve(curve, direction) {

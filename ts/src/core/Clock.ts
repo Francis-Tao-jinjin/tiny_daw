@@ -84,9 +84,6 @@ export class Clock extends Vox {
         }
       });
       this._tickSource.forEachTickBetween(startTime, endTime, (time, ticks) => {
-        // console.log('time', time);
-        // console.log('ticks', ticks);
-
         this.callback(time, ticks);
       });
     }

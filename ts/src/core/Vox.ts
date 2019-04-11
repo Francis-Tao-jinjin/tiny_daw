@@ -12,12 +12,6 @@ import { VoxSource } from '../audioSource/Source';
 import { VoxBufferSource } from '../audioSource/BufferSource';
 import { VoxOscillatorNode } from '../audioSource/OscillatorNode';
 
-// import { TimeBase } from './TimeBase';
-// import { Time } from './Time';
-// import { Frequency } from './Frequency';
-// import { Ticks } from './Ticks';
-// import { TransportTime } from './TransportTime';
-// import { TimeBase } from './TimeBase';
 import { Time } from '../Time/Time';
 import { Frequency } from '../Time/Frequency';
 import { Ticks } from '../Time/Ticks';
@@ -40,6 +34,7 @@ import { isNumber, isUndefined, isObject } from 'util';
 import { TransportEvent } from './TransportEvent';
 import { TransportRepeatEvent } from './TransportRepeatEvent';
 import { IntervalTimeTree } from './IntervalTimeTree';
+import { Loop } from '../application/Loop';
 
 export class Vox {
   public static VoxContext:typeof VoxContext;
@@ -74,6 +69,8 @@ export class Vox {
   public static VoxAudioParam:typeof VoxAudioParam;
   
   public static Volume:typeof Volume;
+
+  public static Loop:typeof Loop;
   
   public static Clock:typeof Clock;
   public static context:VoxContext;// = new VoxContext(new AudioContext());
@@ -101,6 +98,8 @@ export class Vox {
       return this.now();
     } else if (Vox.isString(time)) {
       return (new Vox.Time(time)).toSeconds();
+    } else if (time.TimeObject) {
+      return time.toSeconds();
     }
   }
 
@@ -116,7 +115,7 @@ export class Vox {
 
   public toTicks(time?) {
     if (Vox.isNumber(time) || Vox.isString(time)) {
-      return;
+      return (new Vox.TransportTime(time)).toTicks();
     } else if (Vox.isUndef(time)) {
       return Vox.VoxTransportCtrl.ticks;
     } else if (time.TimeObject === true) {

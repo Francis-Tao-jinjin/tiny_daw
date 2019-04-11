@@ -9,12 +9,12 @@ export class VoxGain extends Vox.VoxAudioNode {
 
   private _gainNode;
 
-  constructor(gain:number, units:VoxType) {
+  constructor(gain:number, units?:VoxType) {
     super();
     this.input = this.output = this._gainNode = this.context._ctx.createGain();
     this.gain = new Vox.VoxAudioParam({
       param: this._gainNode.gain,
-      units: units,
+      units: units === undefined ? VoxType.Default : units,
       convert: true,
       value: gain,
     });

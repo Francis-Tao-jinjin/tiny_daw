@@ -14,7 +14,6 @@ export class Volume extends Vox.VoxAudioNode {
 
   constructor(volume) {
     super();
-
     // 数值为 分贝
     this.output = this.input = new Vox.VoxGain(volume, VoxType.Decibels);
     this.initialVolume = volume;

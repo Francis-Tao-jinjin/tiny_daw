@@ -26,6 +26,29 @@ export const expressions = {
       return this.ticksToUnits(parseInt(value));
     }
   },
+  m: {
+    regexp: /^(\d+)m$/i,
+    method: function(value) {
+      value = parseInt(value);
+      return this.beatsToUnits(value *  this.getTimeSignature());
+    }
+  },
+  tr: { // measure:quater:sixteenth
+    regexp: /^(\d+)?:(\d+)?:(\d+)?$/i,
+    method: function(m, q, s) {
+      let count = 0;
+      if (m !== undefined && m !== 0) {
+        count += this.beatsToUnits(parseInt(m) *  this.getTimeSignature());
+      }
+      if (q !== undefined && q !== 0) {
+        count += this.beatsToUnits(parseInt(q));
+      }
+      if (s !== undefined && s !== 0) {
+        count += this.beatsToUnits(parseInt(s) / 4);
+      }
+      return count;
+    }
+  },
   hz: {
     regexp: /^(\d+(?:\.\d+)?)hz$/i,
     method: function(value) {

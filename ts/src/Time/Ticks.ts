@@ -37,7 +37,7 @@ export class Ticks extends Vox {
     return Time.prototype.valueOf.call(this);
   }
 
-  public beatesToUnits(beats) {
+  public beatsToUnits(beats) {
     return this.getPPQ() * beats;
   }
 
@@ -63,10 +63,6 @@ export class Ticks extends Vox {
 
   public frequencyToUnits(freq) {
     return Time.prototype.frequencyToUnits.call(this, freq);
-  }
-
-  public beatsToUnits(beats) {
-    return Time.prototype.beatsToUnits.call(this, beats);
   }
 
   public secondsToUnits(seconds) {

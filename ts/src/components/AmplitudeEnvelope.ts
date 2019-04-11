@@ -6,7 +6,6 @@ export class AmplitudeEnvelope extends Vox.Envelope {
   
   constructor(opt?) {
     super(opt);
-
     this.input = this.output = new Vox.VoxGain(1, VoxType.Default);
     this.sig.connect(this.output.gain);
   }
