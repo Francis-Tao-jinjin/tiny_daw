@@ -178,8 +178,6 @@ export class TransportCtrl extends Vox {
     if (this._secheduleEvents.hasOwnProperty(eventId)) {
       const item = this._secheduleEvents[eventId.toString()];
       item.timeline.remove(item.event);
-      console.log('remove', item.event);
-      console.log('timeline', item.timeline);
       item.event.dispose();
       delete this._secheduleEvents[eventId.toString()];
     }

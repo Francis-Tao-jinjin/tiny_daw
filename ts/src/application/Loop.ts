@@ -23,7 +23,7 @@ export class Loop extends Vox {
         time = time === undefined ? -1 : time;
         this._state.forEachFrom(time, (event) => {
             if (event.state === PlayState.Started) {
-                if (event.id === undefined) {
+                if (event.id !== undefined) {
                     Vox.VoxTransportCtrl.clear(event.id);
                 }
                 const startTick = event.time + Math.round(this.startOffset / this._playbackRate);
@@ -118,7 +118,6 @@ export class Loop extends Vox {
 		}
     }
 
-
     get playbackRate() {
         return this._playbackRate;
     }
@@ -126,6 +125,11 @@ export class Loop extends Vox {
     set playbackRate(value) {
         this._playbackRate = value;
         this._rescheduleEvents();
+    }
+
+    // 获取离当前时刻最近的一个状态
+    get state() {
+        return this._state.getRecentValueAtTime(Vox.VoxTransportCtrl.ticks);
     }
 
     private _getLoopDuration() {
