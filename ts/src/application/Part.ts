@@ -4,12 +4,12 @@ import { Loop } from './Loop';
 
 export class Part extends Vox {
 
-  private _loopEvents:Loop[] = [];
-  private _loop = -1;
-  private _loopEnd = this.toTicks('1m');
-  private _loopStart = this.toTicks(0);
-  private _playbackRate = 1;
-  private _state = new Vox.TimelineState(PlayState.Stopped);
+  protected _loopEvents:Loop[] = [];
+  protected _loop = -1;
+  protected _loopEnd = this.toTicks('1m');
+  protected _loopStart = this.toTicks(0);
+  protected _playbackRate = 1;
+  protected _state = new Vox.TimelineState(PlayState.Stopped);
 
   public callback:(time, data) => void;
 
