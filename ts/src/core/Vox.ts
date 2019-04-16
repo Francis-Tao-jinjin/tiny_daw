@@ -36,6 +36,7 @@ import { TransportRepeatEvent } from './TransportRepeatEvent';
 import { IntervalTimeTree } from './IntervalTimeTree';
 import { Loop } from '../application/Loop';
 import { Part } from '../application/Part';
+import { Sequence } from '../application/Sequence';
 
 export class Vox {
   public static VoxContext:typeof VoxContext;
@@ -73,6 +74,7 @@ export class Vox {
 
   public static Loop:typeof Loop;
   public static Part:typeof Part;
+  public static Sequence:typeof Sequence;
   
   public static Clock:typeof Clock;
   public static context:VoxContext;// = new VoxContext(new AudioContext());

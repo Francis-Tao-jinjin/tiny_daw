@@ -264,7 +264,7 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
   //	AUTOMATION CURVE CALCULATIONS
   //	MIT License, copyright (c) 2014 Jordan Santell
   ///////////////////////////////////////////////////////////////////////////
-
+  // https://hg.mozilla.org/mozilla-central/rev/6aa5ba09b849
   private _exponentialApproach(t0, v0, v1, timeConstant, t) {
     return v1 + (v0 - v1) * Math.exp(-(t - t0) / timeConstant);
   }

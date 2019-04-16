@@ -118,7 +118,6 @@ export class Oscillator extends VoxSource {
   }
 
   set type(t) {
-    console.log('Oscillator set Type');
     const coefs = this._getRealImaginary(t, this._phase);
     const periodicWave = this.context._ctx.createPeriodicWave(coefs[0], coefs[1]);
     this._wave = periodicWave;
@@ -141,7 +140,6 @@ export class Oscillator extends VoxSource {
     this.detune.connect(this._oscillator.detune);
 
     time = this.toSeconds(time);
-    console.log('this._oscillator.start', time);
     this._oscillator.start(time);
   }
 

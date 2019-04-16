@@ -6,6 +6,19 @@ import { Signal } from '../signal/Signal';
 // import { AmplitudeEnvelope } from '../components/AmplitudeEnvelope';
 import { Envelope } from '../components/Envelope';
 
+// Understanding every synthesizer in a 5 minute read
+// https://medium.com/@dennisstoelwinder/understanding-every-synthesizer-in-a-5-minute-read-7af0a4a3a920
+/**
+ * The seven main components of a synthesizer
+  1. Amplifier — also know as VCA or DCA
+  2. Oscillator — also know as VCO, DCO, OSC, Frequency
+  3. Filter — also known as modulator, VCF, DCF
+  4. Volume envelope
+  5. Filter envelope
+  6. Pitch envelope
+  7. LFO — low-frequency oscillator
+ */
+
 export class Synth extends Monophonic {
   
   public readonly oscillator:Oscillator;

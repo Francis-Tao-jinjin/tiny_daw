@@ -5,8 +5,7 @@ import { TickCounter } from '../components/TickCounter';
 import { TimelineState } from './TimelineState';
 
 export class Clock extends Vox {
-  
-  private _nextTick = 0;
+
   private _tickSource:TickSource;
   private _lastUpdate = 0;
   private _state:TimelineState;

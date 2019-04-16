@@ -30,6 +30,7 @@ export * from './instrument/Synth';
 
 export * from './application/Loop';
 export * from './application/Part';
+export * from './application/Sequence';
 
 export * from './core/Context';
 export * from './core/Master';

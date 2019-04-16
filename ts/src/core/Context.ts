@@ -44,24 +44,26 @@ class Ticker {
     this._worker = worker;
   }
 
-  private _createTimeout() {
-    this._timeout = setTimeout(() => {
-      this._createTimeout();
-      this._callback();
-    }, this._updateInterval * 1000);
-  }
+  // private _createTimeout() {
+  //   this._timeout = setTimeout(() => {
+  //     this._createTimeout();
+  //     this._callback();
+  //   }, this._updateInterval * 1000);
+  // }
 
   private _createClock() {
     if (this._type === VoxTick.Worker) {
       try {
         this._createWorker();
       } catch(e) {
-        this._type = VoxTick.Timeout;
-        this._createTimeout();
+        console.error(e);
+        // this._type = VoxTick.Timeout;
+        // this._createTimeout();
       }
-    } else if (this._type === VoxTick.Timeout) {
-      this._createTimeout();
-    }
+    } 
+    // else if (this._type === VoxTick.Timeout) {
+    //   this._createTimeout();
+    // }
   }
 
   private _disposeClock() {
@@ -76,7 +78,7 @@ class Ticker {
     }
   }
 
-  private dispose() {
+  public dispose() {
     this._disposeClock();
     this._callback = null;
   }
@@ -147,6 +149,12 @@ export class VoxContext extends Vox {
   }
 
   public clearTimeout(id) {
+    this._timeouts.forEach(function(event) {
+      if (event.id === id) {
+        this.remove(event);
+      }
+    });
+    return this;
   }
 }
 

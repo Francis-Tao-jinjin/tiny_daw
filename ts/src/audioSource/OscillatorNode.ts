@@ -11,7 +11,6 @@ export class VoxOscillatorNode extends Vox.VoxAudioNode {
   public frequency:VoxAudioParam;
   public detune:VoxAudioParam;
 
-  private _gain = 1;
   private _startTime = -1;
   private _stopTime = -1;
   private _gainNode:VoxGain;

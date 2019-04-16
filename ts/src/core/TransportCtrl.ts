@@ -132,15 +132,15 @@ export class TransportCtrl extends Vox {
 
   private _processTick(tickTime, ticks) {
     // console.log('_processTick');
-    if (this.loop) {
-      if (ticks >= this._loopEnd) {
-        this.emit(['loopEnd', tickTime]);
-        this._clock.setTicksAtTime(this._loopStart, tickTime);
-        ticks = this._loopStart;
-        this.emit(['loopStart', tickTime, this._clock.getSecondsAtTime(tickTime)]);
-        this.emit(['loop', tickTime]);
-      }
-    }
+    // if (this.loop) {
+    //   if (ticks >= this._loopEnd) {
+    //     this.emit(['loopEnd', tickTime]);
+    //     this._clock.setTicksAtTime(this._loopStart, tickTime);
+    //     ticks = this._loopStart;
+    //     this.emit(['loopStart', tickTime, this._clock.getSecondsAtTime(tickTime)]);
+    //     this.emit(['loop', tickTime]);
+    //   }
+    // }
     this._timeline.forEachAtTime(ticks, function(event) {
       event.invoke(tickTime);
     });
@@ -161,7 +161,6 @@ export class TransportCtrl extends Vox {
       time: (new Vox.TransportTime(time)),
       callback:  callback,
     });
-    console.log(event);
     return this._addEvent(event, this._timeline);
   }
 

@@ -9,7 +9,7 @@ export class Loop extends Vox {
     private _state = new Vox.TimelineState(PlayState.Stopped);
     private data:any;
     private callback:(time:number, data:any) => void;
-    
+
     public startOffset = 0;
 
     constructor(callback, data?) {
@@ -39,16 +39,16 @@ export class Loop extends Vox {
                         duration = new Vox.Ticks(duration);
                     }
                     const interval = new Vox.Ticks(this._getLoopDuration());
-                    event.id = Vox.VoxTransportCtrl.scheduleRepeat(this._tick.bind(this), interval, new Vox.Ticks(startTick), duration);
+                    event.id = Vox.VoxTransportCtrl.scheduleRepeat(this._invoke.bind(this), interval, new Vox.Ticks(startTick), duration);
                 } else {
-                    event.id = Vox.VoxTransportCtrl.schedule(this._tick.bind(this), new Vox.Ticks(startTick));
+                    event.id = Vox.VoxTransportCtrl.schedule(this._invoke.bind(this), new Vox.Ticks(startTick));
                 }
             }
         });
         return this;
     }
 
-    private _tick(time) {
+    private _invoke(time) {
         const ticks = Vox.VoxTransportCtrl.getTicksAtTime(time);
         if (this._state.getRecentValueAtTime(ticks) === PlayState.Started) {
             this.callback(time, this.data);

@@ -11,6 +11,8 @@ export class Part extends Vox {
   protected _playbackRate = 1;
   protected _state = new Vox.TimelineState(PlayState.Stopped);
 
+  protected _startOffset = 0;
+
   public callback:(time, data) => void;
 
   constructor(callback, events = []) {
@@ -27,7 +29,13 @@ export class Part extends Vox {
 
   public add(time, data) {
     time = this.toTicks(time);
-    const event = new Vox.Loop(this._tick.bind(this), data);
+    let event;
+    if (data instanceof Loop || data instanceof Part) {
+      event = data;
+      event.callback = this._invoke.bind(this);
+    } else {
+      event = new Vox.Loop(this._invoke.bind(this), data);
+    }
     event.startOffset = time;
     event.loopEnd = this.loopEnd;
     event.loopStart = this.loopStart;
@@ -39,7 +47,7 @@ export class Part extends Vox {
     return this;
   }
 
-  private _tick(time, data) {
+  protected _invoke(time, data) {
     this.callback(time, data);
   }
 
@@ -125,7 +133,11 @@ export class Part extends Vox {
     if (this._loopEvents) {
       for (let i = this._loopEvents.length - 1; i >= 0; i--) {
         const e = this._loopEvents[i];
-        callback(e);
+        if (e instanceof Part) {
+          e._forEach(callback);
+        } else {
+          callback(e);
+        }
       }
     }
   }
@@ -147,7 +159,8 @@ export class Part extends Vox {
 
   set loopEnd(value) {
     this._loopEnd = this.toTicks(value);
-    if (this._loop) {
+    // 确保所有的子元素都要和父元素的值保持一致
+    if (this._loop >= 0) {
       this._forEach((event) => {
         event.loopEnd = value;
       });
@@ -159,8 +172,9 @@ export class Part extends Vox {
   }
 
   set loopStart(value) {
-    this._loopEnd = this.toTicks(value);
-    if (this._loop) {
+    this._loopStart = this.toTicks(value);
+     // 确保所有的子元素都要和父元素的值保持一致
+    if (this._loop >= 0) {
       this._forEach((event) => {
         event.loopStart = value;
       });
@@ -169,6 +183,24 @@ export class Part extends Vox {
 
   get playbackRate() {
     return this._playbackRate;
+  }
+
+  set playbackRate(value) {
+    this._playbackRate = value;
+    this._forEach((event) => {
+      event.playbackRate = value;
+    });
+  }
+
+  get startOffset() {
+    return this._startOffset;
+  }
+
+  set startOffset(value) {
+    this._startOffset = value;
+    this._forEach((event) => {
+      event.startOffset += this._startOffset;
+    });
   }
 
   private _getLoopDuration() {
