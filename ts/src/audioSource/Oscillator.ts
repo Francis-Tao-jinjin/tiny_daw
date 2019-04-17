@@ -48,6 +48,7 @@ export class Oscillator extends VoxSource {
     this.type = this._type;
   }
 
+  // https://chromium.googlesource.com/chromium/blink/+/master/Source/modules/webaudio/PeriodicWave.cpp
   public _getRealImaginary(type, phase) {
     const fftSize = 4096;
     let periodicWaveSize = fftSize / 2;
@@ -72,6 +73,7 @@ export class Oscillator extends VoxSource {
     }
 
     // https://webaudio.github.io/web-audio-api/#periodicwave
+    // https://chromium.googlesource.com/chromium/blink/+/master/Source/modules/webaudio/PeriodicWave.cpp#237
     for (var n = 1; n < periodicWaveSize; ++n) {
       const piFactor = 2/(n * Math.PI);
       let b;
@@ -120,6 +122,8 @@ export class Oscillator extends VoxSource {
   set type(t) {
     const coefs = this._getRealImaginary(t, this._phase);
     const periodicWave = this.context._ctx.createPeriodicWave(coefs[0], coefs[1]);
+    // console.log('coefs', coefs);
+    // console.log('periodicWave', periodicWave);
     this._wave = periodicWave;
     if (this._oscillator !== null) {
       this._oscillator.setPeriodicWave(this._wave);

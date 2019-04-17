@@ -9,10 +9,14 @@ const player = new Vox.Player({
 });
 player.toMaster();
 
+const ana = Vox.context._ctx.createAnalyser();
+Vox.connect(Vox.context.master.output,ana);
+
 (window as any).player = player;
 (window as any).Vox = Vox;
 
 window.onload = () => {
+
   let playBtn = document.getElementById('playBtn');
   playBtn.onclick = () => {
     player.start();
@@ -21,7 +25,24 @@ window.onload = () => {
   stopBtn.onclick = () => {
     player.stop();
   }
+
+  const canvas = <HTMLCanvasElement>(document.getElementById('waveform'));
+  const capturebuf = new Float32Array(512);
+  const canvasctx = canvas.getContext('2d');
+  function DrawGraph() {
+    ana.getFloatTimeDomainData(capturebuf);
+    canvasctx.fillStyle = "#222222";
+    canvasctx.fillRect(0, 0, 512, 512);
+    canvasctx.fillStyle = "#00ff44";
+    canvasctx.fillRect(0, 128, 512, 1);
+    for(let i = 0; i < 512; ++i) {
+        const v = 128 - capturebuf[i] * 128;
+        canvasctx.fillRect(i, v, 1, 128 - v);
+    }
+  }
+  setInterval(DrawGraph, 50);
 }
+
 
 var s = (new Vox.Synth()).toMaster();
 s.oscillator.type = OscilType.square;
