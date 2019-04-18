@@ -43,21 +43,6 @@ export class VoxAudioParam extends Vox.VoxAudioNode {
     this.setValueAtTime(val, this.now());
   }
 
-  // get minValue() {
-  //   if (this.units === VoxType.Time || this.units === VoxType.Frequency ||
-  //       this.units === VoxType.Positive || this.units === VoxType.BPM) {
-  //     return 0;
-  //   } else if (this.units === VoxType.Decibels) {
-  //     return -Infinity;
-  //   } else {
-  //     return this._param.minValue;
-  //   }
-  // }
-
-  // get maxValue() {
-  //   return this._param.maxValue;
-  // }
-
   public setValueCurveAtTime(values, startTime, duration, scaling = 1) {
     duration = this.toSeconds(duration);
     startTime = this.toSeconds(startTime);
