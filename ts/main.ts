@@ -43,9 +43,10 @@ window.onload = () => {
   setInterval(DrawGraph, 50);
 }
 
+// 1234567
+// CDEFGAB
 
 var s = (new Vox.Synth()).toMaster();
-s.oscillator.type = OscilType.square;
 var seq = new Vox.Sequence(function(time, note){
   // console.log(note);
   if (note) {
@@ -56,4 +57,13 @@ var seq = new Vox.Sequence(function(time, note){
 	'c4', ['', 'e3'], ["e4", "d#4"], ["e4", "d#4"], ["e4", "b3"], ["d4", 'c4'], "a3", ['', 'c3'], ['e3', 'a3'], 'b3', ['', 'e3'], ['c4', 'b3'],
 	'a3', ['', '']
 ]);
+
+var song= [
+['g5', 'g4'], ['f4', 'e4'], ['', 'e4'], ['f4', 'e4'], ['', 'e4'],
+['f4', 'e4'], ['f4', 'e4'], ['d4', 'c4'], ['', 'c4'], ['e4', 'g4'],
+['a6', 'a6'], ['a6', 'g4'], ['d4', 'e4'], ['f4', 'e4'], ['', 'c4'],
+['e4', 'g4'], ['a4', 'a4'], ['g4', 'd4'], ['e4', 'f4'], ['e4', 'f4'],
+['e4', 'd4'], ['c4', ''], ['c4', 'b3'], ['c4', 'a3'], ['', 'a3'], 
+['c4', 'b3'], ['b3', 'c4']
+]
 seq.loop = -1;

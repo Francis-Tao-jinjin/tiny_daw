@@ -38,4 +38,7 @@ export * from './core/Clock';
 export * from './core/TransportEvent';
 export * from './core/TransportRepeatEvent';
 export * from './core/TransportCtrl';
+
+export * from './operator/Operator';
+
 export * from './core/Vox';

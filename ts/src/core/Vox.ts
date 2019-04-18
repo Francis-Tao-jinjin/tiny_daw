@@ -37,6 +37,7 @@ import { IntervalTimeTree } from './IntervalTimeTree';
 import { Loop } from '../application/Loop';
 import { Part } from '../application/Part';
 import { Sequence } from '../application/Sequence';
+import { Multiply, Add } from '../operator/Operator';
 
 export class Vox {
   public static VoxContext:typeof VoxContext;
@@ -83,6 +84,9 @@ export class Vox {
   public static TransportEvent:typeof TransportEvent;
   public static TransportRepeatEvent:typeof TransportRepeatEvent;
   public static TransportTime:typeof TransportTime;
+
+  public static Multiply:typeof Multiply;
+  public static Add:typeof Add;
 
   public name = 'vox';
 
@@ -173,7 +177,7 @@ export class Vox {
       }
 
       if (dstNode instanceof AudioParam) {
-        (srcNode as VoxAudioNode).disconnect(dstNode, outputNumber, inputNumber);
+        (srcNode as VoxAudioNode).disconnect(dstNode, outputNumber);
       } else if (dstNode instanceof AudioNode) {
         (srcNode as VoxAudioNode).disconnect(dstNode, outputNumber, inputNumber);
       }
